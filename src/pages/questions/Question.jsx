@@ -21,9 +21,9 @@ function Question({ id }) {
                 padding: '100px'
             }}
         >
-            <Typography sx={{color: 'white', fontWeight: 800}} variant='h4'>{question.questionText}</Typography>
+            <Typography sx={{color: 'white', fontWeight: 800}} variant='h4'>{question?.questionText}</Typography>
             <List>
-                {question.options.map((opt) => {
+                {question?.options.map((opt) => {
                     const selected = answers[question.id] === opt.optionValue;
                     return (
                         <ListItemButton
