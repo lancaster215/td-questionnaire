@@ -42,7 +42,7 @@ export const QuestionProvider = ({ children }) => {
 
     const setAnswer = (id, answer) => {
         setAnswers((prev) => ({ ...prev, [id]: answer }));
-        setQuestionId(questionId + 1)
+        setQuestionId((prev) => prev + 1)
 
         switch(answer) {
             case 'silk-press': 
