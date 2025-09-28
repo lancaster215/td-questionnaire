@@ -2,7 +2,10 @@ name: Deploy Next.js site to GitHub Pages
 
 on:
   push:
-    branches: ["main"]  # 👈 or 'master', depending on your default branch
+    branches: ["main"]
+
+permissions:
+  contents: write
 
 jobs:
   build-and-deploy:
