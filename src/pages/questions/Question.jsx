@@ -40,6 +40,7 @@ function Question({ id }) {
                                 : 'transparent',
                                 color: 'white',
                                 fontWeight: 700,
+                                fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
                                 transition: 'all 0.3s ease',
                                 '&:hover': {
                                     backgroundColor: 'rgba(255,255,255,0.1)',
