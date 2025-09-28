@@ -6,6 +6,9 @@ const nextConfig = {
   output: 'export',
   basePath: isProd ? '/td-questionnaire' : '',
   assetPrefix: isProd ? '/td-questionnaire/' : '',
+  publicRuntimeConfig: {
+    basePath: isProd ? '/td-questionnaire' : '',
+  },
 };
 
 export default nextConfig;
