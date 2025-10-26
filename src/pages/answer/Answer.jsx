@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function Answer({ basePath }) {
+export default function Answer({ basePath, viewportWidth }) {
     const { setQuestionId } = useQuestionContext()
     const { rating } = useSelector((state) => state.question)
     const dispatch = useDispatch()
@@ -25,7 +25,7 @@ export default function Answer({ basePath }) {
     return (
         <AnimatePresence mode="wait">
             <Stack 
-                direction={'row'}
+                direction={viewportWidth <= 500 ? 'column' : 'row'}
                 sx={{
                     width: '100%',
                     justifyContent: 'center',
@@ -34,10 +34,15 @@ export default function Answer({ basePath }) {
             >
                 <motion.div
                     key="answer-image"
-                    initial={{ x: "100%", width: "40%", opacity: 0, scale: 1.05 }} // start offscreen to the right
+                    initial={{ 
+                        x: viewportWidth <= 500 ? '0%' : '100%', 
+                        width: viewportWidth <= 500 ? '100vw' : '40%', 
+                        opacity: 0, 
+                        scale: 1.05 
+                    }} // start offscreen to the right
                     animate={{
                         x: 0,
-                        width: "40%",
+                        width: viewportWidth <= 500 ? '100vw' : '40%',
                         opacity: 1,
                         scale: 1,
                     }} // slide to position
@@ -47,40 +52,52 @@ export default function Answer({ basePath }) {
                         scale: 0.95,
                     }}
                     transition={{
-                        duration: 1.5,
+                        duration: 1,
                         ease: "easeInOut",
                     }}
                 >
-                <Stack sx={{
-                    backgroundImage: isMariah ? 
-                    `url(${basePath}/mariah.jpg)` :
-                    isDennis ?
-                    `url(${basePath}/dennis.jpg)` : 
-                    isRegina ?
-                    `url(${basePath}/regina.jpeg)` : 
-                    isTru && 
-                    `url(${basePath}/tru.jpg)`,
-                    height: '100vh',
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                    backgroundRepeat: "no-repeat",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    width: '100%',
-                }}/>
+                    <Stack sx={{
+                        position: "relative",
+                        backgroundImage: isMariah ? 
+                        `url(${basePath}/mariah.jpg)` :
+                        isDennis ?
+                        `url(${basePath}/dennis.jpg)` : 
+                        isRegina ?
+                        `url(${basePath}/regina.jpeg)` : 
+                        isTru && 
+                        `url(${basePath}/tru.jpg)`,
+                        height: viewportWidth <= 500 ? '50vh' : '100vh',
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                        backgroundRepeat: "no-repeat",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: viewportWidth <= 500 ? '100vw' : '30vw',
+                        "&::after": {
+                            content: '""',
+                            position: "absolute",
+                            bottom: 0,
+                            left: 0,
+                            width: "100%",
+                            height: "40%", // adjust fade height
+                            background:
+                                "linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.9) 100%)",
+                            pointerEvents: "none",
+                        },
+                    }}/>
                 </motion.div>
                 <Stack
                     sx={{ 
                         // bgcolor: 'linear-gradient(145deg,rgba(17, 18, 13, 0.7) 0%,rgba(30, 30, 30, 0.9) 40%,rgba(255, 255, 255, 0.08) 60%,rgba(17, 18, 13, 0.9) 100%)',
                         backdropFilter: 'blur(4px)',
-                        width: '70%',
-                        height: '70%',
+                        width: viewportWidth <= 500 ? '100vw' : '70%',
+                        height: viewportWidth <= 500 ? '50vh' : '70%',
                         WebkitBackdropFilter: 'blur(4px)',
                         // border: '1px solid rgba(255, 255, 255, 0.1)',
                         // borderRadius: 2,
                         // boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
-                        padding: '100px',
+                        padding: viewportWidth <= 500 ? '20px' : '100px',
                         textAlign: 'center',
                         // backgroundColor: 'blue',
                     }}

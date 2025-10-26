@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button, Stack, Typography } from "@mui/material";
 import Question from "./questions/Question.jsx";
 import { useQuestionContext } from "@/hooks/useQuestionContext.js";
@@ -11,7 +11,24 @@ export default function Home() {
   const { publicRuntimeConfig = {} } = getConfig();
   const basePath = publicRuntimeConfig.basePath || "";
   const [openQuestionnaire, setOpenQuestionnaire] = useState(false);
+  const [width, setWidth] = useState(0);
 
+  useEffect(() => {
+    const handleResize = () => {
+      console.log("Resizing to: ", window.innerWidth);
+      setWidth(window.innerWidth);
+    }
+
+    // Set initial width
+    handleResize();
+
+    // Update on resize
+    window.addEventListener("resize", handleResize);
+
+    // Cleanup
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+  
   return(
     <AnimatePresence mode="wait">
       {openQuestionnaire ? (
@@ -36,9 +53,9 @@ export default function Home() {
               justifyContent: "center",
             }}>
               {questions.length === questionId - 1 ? 
-                <Answer basePath={basePath}/>
+                <Answer basePath={basePath} viewportWidth={width}/>
               :
-                <Question id={questionId}/>
+                <Question id={questionId} viewportWidth={width}/>
               }
               
           </Stack>
@@ -55,22 +72,22 @@ export default function Home() {
             sx={{
               width: '100%',
             }}
-            direction={'row'}
+            direction={width <= 500 ? 'column' : 'row'}
           >
             <motion.div
               style={{
-                width: '40%',
+                width: width <= 500 ? '100%' : '40%',
                 backgroundColor: 'black',
-                height: '100vh',
+                height: width <= 500 ? '50vh' : '100vh',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
-              initial={{ x: 0, width: "40%", scale: 1 }}
+              initial={{ x: 0, width: width <= 500 ? '100%' : '40%', scale: 1 }}
               exit={{
-                x: ["0%","-100%"],        // move left then back to center
-                width: ["40%", "0%",],  // stay at 50% during slide, then expand
-                scale: [1,0],          // optional subtle zoom
+                x: ["0%","-100%"],
+                width: width <= 500 ? ["100%", "0%"]:["40%", "0%",],
+                scale: [1,0],
               }}
               transition={{ duration: 0.5, ease: "easeInOut" }}
             >
@@ -82,10 +99,10 @@ export default function Home() {
                 }}
                 gap="20px"
               >
-                <Typography sx={{color: 'white', fontWeight: 800}} variant='h4'>
+                <Typography sx={{color: 'white', fontWeight: 800, fontSize: 'clamp(1rem, 2vw + 0.5rem, 2.5rem)', }} variant='h4'>
                   Match with the Prefect Stylist for you! Take the Quiz!
                 </Typography>
-                <Typography sx={{color: 'white'}} variant="h6">Discover which stylist is best suited for you!</Typography>
+                <Typography sx={{color: 'white', fontSize: width <= 500 ? 'clamp(1rem, 2vw + 0.5rem, 2.5rem)' : 'clamp(0.5rem, 1.5vw + 0.1rem, 2rem)' }} variant="h6">Discover which stylist is best suited for you!</Typography>
                 <Button
                   sx={{
                     backgroundColor: '#0070f3',
@@ -110,24 +127,47 @@ export default function Home() {
             </motion.div>
             <motion.div
               style={{
-                width: "60%",
-                height: "100vh",
-                backgroundImage: `url(${basePath}/landing.jpg)`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                backgroundRepeat: "no-repeat",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
+                position: "relative",
+                width: width <= 500 ? "100%" : "60%",
+                height: width <= 500 ? "50vh" : "100vh",
               }}
-              initial={{ x: 0, width: "60%", scale: 1 }}
-              exit={{
+              initial={{ x: 0, width: width <= 500 ? '100%' : '60%', scale: 1 }}
+              exit={width <= 500 ?{
+                y: ["0%", "-50%", "-50%"],        // move left then back to center
+                height: ['50vh', '100vh', '100vh'], // stay at 50% during slide, then expand
+                scale: [1, 1.05, 1.1],          // optional subtle zoom
+              } : {
                 x: ["0%", "0%", "0%"],        // move left then back to center
                 width: ["60%", "100%", "100%"],  // stay at 50% during slide, then expand
-                scale: [1, 1.05, 1.1],          // optional subtle zoom
+                scale: [1, 1.05, 1.1],   
               }}
               transition={{ duration: 1, ease: "easeInOut" }}
-            />
+            >
+              <Stack 
+                sx={{
+                  position: "relative",
+                  width: '100%',
+                  height: '100%',
+                  backgroundImage: `url(${basePath}/landing.jpg)`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  backgroundRepeat: "no-repeat",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  "&::after": width <= 500 ? {
+                    content: '""',
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "40%",
+                    background: "linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%)",
+                    pointerEvents: "none",
+                  } : {},
+                }}
+              />
+            </motion.div>
           </Stack>
         </motion.div>
       )}

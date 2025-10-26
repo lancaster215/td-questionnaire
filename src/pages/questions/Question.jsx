@@ -4,7 +4,7 @@ import { Button, List, ListItemButton, Stack, Typography } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from "framer-motion";
 
-function Question({ id }) {
+function Question({ id, viewportWidth }) {
     const dispatch = useDispatch()
     const { questions, answers, setAnswer, setQuestionId, questionId, } = useQuestionContext();
     const question = questions.find((q) => q.id === id);
@@ -22,7 +22,7 @@ function Question({ id }) {
                     border: '1px solid rgba(255, 255, 255, 0.1)',
                     borderRadius: 2,
                     boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
-                    padding: '100px',
+                    padding: viewportWidth <= 500 ? '50px' : '100px',
                     alignItems: 'center',
                 }}
             >
@@ -37,7 +37,7 @@ function Question({ id }) {
                     }}
                     transition={{ duration: 0.8, ease: "easeInOut" }}
                 >
-                    <Typography sx={{color: 'white', fontWeight: 800}} variant='h4'>{question?.questionText}</Typography>
+                    <Typography sx={{color: 'white', fontWeight: 800,  fontSize: 'clamp(1rem, 2vw + 0.5rem, 2.5rem)'}} variant='h4'>{question?.questionText}</Typography>
                     <List>
                         {question?.options.map((opt) => {
                             const selected = answers[question.id] === opt.optionValue;
@@ -54,16 +54,24 @@ function Question({ id }) {
                                         backgroundColor: selected
                                         ? 'rgba(144, 202, 249, 0.2)'
                                         : 'transparent',
-                                        color: 'white',
-                                        fontWeight: 700,
-                                        fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+                                        
                                         transition: 'all 0.3s ease',
                                         '&:hover': {
                                             backgroundColor: 'rgba(255,255,255,0.1)',
                                         },
+                                        
                                     }}
                                     >
-                                    {opt.optionText}
+                                        <Typography
+                                            sx={{
+                                                fontSize: viewportWidth <= 500 ? 'clamp(1rem, 1.5vw + 0.5rem, 2rem)' : 'clamp(0.25rem, 1vw + 0.1rem, 1.75rem)',
+                                                color: 'white',
+                                                fontWeight: 700,
+                                            }}
+                                            variant='h6'
+                                        >
+                                            {opt.optionText}
+                                        </Typography>
                                 </ListItemButton>
                             )
                         })}
